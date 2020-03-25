@@ -203,8 +203,19 @@ class MessageDispatcher:
     Call back invoked when bot is started
     :param payload: Payload
     """
-    self._bot_id = payload['data']['self']['id']
-    self._initialize_self_mention(client=payload['web_client'])
+    web_client = payload.get('web_client', None)
+    data = payload.get('data', None)
+    self._bot_id = data['self']['id']
+    self._initialize_self_mention(client=web_client)
+    # Retrive channels info
+    res = web_client.conversations_list()
+    channels = res['channels']
+    host_chan = self._channel[1:] if self._channel[0] == '#' else self._channel
+    for c in channels:
+      if c['name'] == host_chan:
+        web_client.chat_postMessage(channel=c['id'],
+                                    text='PaperBot is now online.')
+        break
 
   def message_callback(self, **payload):
     """
