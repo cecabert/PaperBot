@@ -1,0 +1,14 @@
+[Unit]
+Description=PaperBot
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 -u bot.py --channel #litterature
+WorkingDirectory=/home/pi/PaperBot
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target

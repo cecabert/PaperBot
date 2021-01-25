@@ -205,17 +205,18 @@ class MessageDispatcher:
     """
     web_client = payload.get('web_client', None)
     data = payload.get('data', None)
-    self._bot_id = data['self']['id']
-    self._initialize_self_mention(client=web_client)
-    # Retrive channels info
-    res = web_client.conversations_list()
-    channels = res['channels']
-    host_chan = self._channel[1:] if self._channel[0] == '#' else self._channel
-    for c in channels:
-      if c['name'] == host_chan:
-        web_client.chat_postMessage(channel=c['id'],
-                                    text='PaperBot is now online.')
-        break
+    if self._bot_id is None:
+      self._bot_id = data['self']['id']
+      self._initialize_self_mention(client=web_client)
+      # Retrive channels info
+      res = web_client.conversations_list()
+      channels = res['channels']
+      host_chan = self._channel[1:] if self._channel[0] == '#' else self._channel
+      for c in channels:
+        if c['name'] == host_chan:
+          web_client.chat_postMessage(channel=c['id'],
+                                      text='PaperBot is now online.')
+          break
 
   def message_callback(self, **payload):
     """
